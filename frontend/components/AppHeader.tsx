@@ -4,7 +4,6 @@ import LogoutButton from "@/components/LogoutButton"
 
 const AppHeader = () => {
   const { user } = useAuthContext()
-
   return (
     <AppBar>
       <Toolbar>

@@ -1,10 +1,20 @@
 import Head from 'next/head'
-import { Inter } from 'next/font/google'
 import styles from '@/styles/Home.module.css'
-
-const inter = Inter({ subsets: ['latin'] })
+import { useApiContext } from '@/src/contexts/ApiContext'
+import { useEffect } from 'react'
+import { useSnackbar } from 'notistack';
 
 export default function Home() {
+  const { api } = useApiContext()
+  const { enqueueSnackbar } = useSnackbar();
+  useEffect(() => {
+    console.log(api)
+    if (!!api) {
+      enqueueSnackbar('API is ready', { variant: 'success' })
+    } else {
+      enqueueSnackbar('API is not ready', { variant: 'error' })
+    }
+  }, [api])
   return (
     <>
       <Head>
