@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+
+
+[project]
+name = "nlpatch"
+description = "text to text model tool"
+authors = [
+    {name = "osoken", email = "osoken.devel@outlook.jp"},
+]
+dynamic = [
+    "version", 
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+
+dependencies = [
+    "pydantic[dotenv]",
+    "pyhumps",
+    "fastapi",
+    "sqlalchemy",
+    "firebase-admin"
+]
+
+[project.urls]
+Source = "https://github.com/lifelong-gaming/nlpatch"
+
+[tool.setuptools]
+packages=["nlpatch"]
+
+[tool.setuptools.package-data]
+nlpatch = ["py.typed"]
+
+
+[project.optional-dependencies]
+dev=[
+    "black",
+    "flake8",
+    "pytest",
+    "mypy",
+    "tox",
+    "isort",
+    "pytest-mock",
+    "pytest-cov",
+    "freezegun",
+    "uvicorn",
+]
