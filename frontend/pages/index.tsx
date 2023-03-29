@@ -3,12 +3,12 @@ import styles from '@/styles/Home.module.css'
 import { useApiContext } from '@/src/contexts/ApiContext'
 import { useEffect } from 'react'
 import { useSnackbar } from 'notistack';
+import { Button } from '@mui/material';
 
 export default function Home() {
   const { api } = useApiContext()
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
-    console.log(api)
     if (!!api) {
       enqueueSnackbar('API is ready', { variant: 'success' })
     } else {
@@ -23,6 +23,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
+        <Button onClick={() => {
+          api?.getUserMe().then((res) => {
+            enqueueSnackbar(JSON.stringify(res), { variant: 'success' })
+          }).catch((err) => {
+            enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
+          })
+        }}>Click me</Button>
       </main>
     </>
   )

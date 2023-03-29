@@ -1,10 +1,27 @@
 import { ReactNode, createContext, useState, useContext, useEffect } from "react"
 import { useAuthContext } from "./AuthContext"
-
+import User from "@/types/User"
 
 class APIHandler {
   constructor(public accessToken: string) { }
   rootURL: string = process.env.NEXT_PUBLIC_API_ROOT || "";
+
+  constructUrl = (path: string) => {
+    return `${this.rootURL.replace(/\/$/, "")}/${path.replace(/^\//, "")}`
+  }
+  constructHeaders = () => {
+    return {
+      "Authorization": `Bearer ${this.accessToken}`
+    }
+  }
+
+  getUserMe: () => Promise<User> = () => {
+    return fetch(
+      this.constructUrl("/user/me"), {
+        headers: this.constructHeaders()
+      }
+    ).then((res: Response) => res.json())
+  }
 }
 
 export type ApiContextProps = {
@@ -25,7 +42,6 @@ export const ApiProvider = ({ children }: ApiProps) => {
   const { user } = useAuthContext()
   const [api, setApi] = useState<APIHandler | null>(null)
   useEffect(() => {
-    console.log(user)
     user?.getIdToken().then((token) => {
       setApi(new APIHandler(token))
     }).catch((error) => {
