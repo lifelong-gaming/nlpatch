@@ -2,11 +2,14 @@ from abc import ABCMeta, abstractmethod
 from typing import TypeVar, Any
 import io
 import csv
-
+from enum import Enum
 from pydantic import BaseSettings as _BaseSettings
 
 S = TypeVar("S", bound="BaseSettings")
 
+
+class AuthProviderType(str, Enum):
+    FIREBASE = "firebase"
 
 class BaseSettings(_BaseSettings):
     class Config:
@@ -16,7 +19,8 @@ class BaseSettings(_BaseSettings):
 
 
 class GlobalSettings(BaseSettings):
-    firebase_credentials: str
+    auth_provider: AuthProviderType = AuthProviderType.FIREBASE
+    auth_provider_settings: dict[str, Any] = {}
     origins: list[str] = []
 
     class Config:
