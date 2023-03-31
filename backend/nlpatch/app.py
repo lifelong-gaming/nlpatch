@@ -2,6 +2,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from .settings import GlobalSettings
 from .auth_providers.factories import create_auth_provider
+from .types import User
 
 def generate_app(settings: GlobalSettings) -> FastAPI:
    app = FastAPI()
@@ -20,8 +21,8 @@ def generate_app(settings: GlobalSettings) -> FastAPI:
       return {"msg":"Hello, this is API server"} 
 
 
-   @app.get("/api/user/me")
-   async def user_me(user = Depends(auth_provider.get_user_token)):
-      return {"id":user['uid']} 
+   @app.get("/api/user/me", response_model=User)
+   async def user_me(user: User = Depends(auth_provider.get_user_token)):
+      return user
 
    return app
