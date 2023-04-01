@@ -1,9 +1,10 @@
 import { ReactNode, createContext, useState, useContext, useEffect } from "react"
-import { useAuthContext } from "./AuthContext"
+import { useAuthContext, UserType } from "./AuthContext"
 import User from "@/types/User"
+import { resolve } from "path";
 
 class APIHandler {
-  constructor(public accessToken: string) { }
+  constructor(public user: UserType, public accessToken: string) { }
   rootURL: string = process.env.NEXT_PUBLIC_API_ROOT || "";
 
   constructUrl = (path: string) => {
@@ -14,13 +15,34 @@ class APIHandler {
       "Authorization": `Bearer ${this.accessToken}`
     }
   }
+  refreshAccessToken: () => Promise<string> = () => {
+    if (this.user === null) return Promise.reject("User is not logged in")
+    return this.user.getIdToken().then((token) => {
+      this.accessToken = token
+      return token
+    })
+  }
+
+  withRefresh<T>(func: () => Promise<T>): Promise<T> {
+    return func().catch((error) => {
+      if (error === "Unauthorized") {
+        return this.refreshAccessToken().then(() => {
+          return func()
+        })
+      }
+      return Promise.reject(error)
+    })
+  }
 
   getUserMe: () => Promise<User> = () => {
-    return fetch(
+    return this.withRefresh(() => fetch(
       this.constructUrl("/user/me"), {
         headers: this.constructHeaders()
       }
-    ).then((res: Response) => res.json())
+    ).then((res: Response) => {
+      if (res.status === 401) return Promise.reject("Unauthorized")
+      return res.json()
+    }))
   }
 }
 
@@ -42,8 +64,9 @@ export const ApiProvider = ({ children }: ApiProps) => {
   const { user } = useAuthContext()
   const [api, setApi] = useState<APIHandler | null>(null)
   useEffect(() => {
+    console.log(user)
     user?.getIdToken().then((token) => {
-      setApi(new APIHandler(token))
+      setApi(new APIHandler(user, token))
     }).catch((error) => {
       setApi(null)
     })
