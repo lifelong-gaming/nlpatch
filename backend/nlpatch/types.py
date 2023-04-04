@@ -1,10 +1,7 @@
-
 from collections.abc import Mapping
-from typing import AbstractSet, Any, Dict, List, Optional, Union
+from typing import AbstractSet, Any, Dict, Optional, Union
 
-from pydantic import AnyHttpUrl
 from pydantic import BaseModel as _BaseModel
-from pydantic import Field, IPvAnyAddress
 
 from .utils import Camelizer
 
@@ -39,3 +36,9 @@ class BaseModel(_BaseModel):
 
 class User(BaseModel):
     id: str
+
+
+class ModelMetadata(BaseModel):
+    id: str
+    name: str
+    description: str

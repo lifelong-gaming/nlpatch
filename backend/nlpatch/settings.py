@@ -11,6 +11,7 @@ S = TypeVar("S", bound="BaseSettings")
 class AuthProviderType(str, Enum):
     FIREBASE = "firebase"
 
+
 class BaseSettings(_BaseSettings):
     class Config:
         env_file = ".env"
@@ -31,7 +32,6 @@ class GlobalSettings(BaseSettings):
                     return []
                 return list(filter(lambda x: len(x) > 1, next(csv.reader(io.StringIO(raw_val)))))
             return cls.json_loads(raw_val)
-
 
 
 class BaseComponentSettings(BaseSettings, metaclass=ABCMeta):
