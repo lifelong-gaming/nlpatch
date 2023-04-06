@@ -12,6 +12,10 @@ class AuthProviderType(str, Enum):
     FIREBASE = "firebase"
 
 
+class StorageType(str, Enum):
+    LOCAL_FILE = "local_file"
+
+
 class BaseSettings(_BaseSettings):
     class Config:
         env_file = ".env"
@@ -22,6 +26,8 @@ class BaseSettings(_BaseSettings):
 class GlobalSettings(BaseSettings):
     auth_provider: AuthProviderType = AuthProviderType.FIREBASE
     auth_provider_settings: dict[str, Any] = {}
+    storage_type: StorageType = StorageType.LOCAL_FILE
+    storage_settings: dict[str, Any] = {}
     origins: list[str] = []
 
     class Config:
