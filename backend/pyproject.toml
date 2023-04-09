@@ -19,7 +19,8 @@ dependencies = [
     "pyhumps",
     "fastapi",
     "sqlalchemy",
-    "firebase-admin"
+    "firebase-admin",
+    "python-dateutil"
 ]
 
 [project.urls]
@@ -44,4 +45,12 @@ dev=[
     "pytest-cov",
     "freezegun",
     "uvicorn",
+    "psycopg2-binary",
+    "types-python-dateutil"
+]
+openai=[
+    "openai",
+]
+postgres=[
+    "psycopg2"
 ]
