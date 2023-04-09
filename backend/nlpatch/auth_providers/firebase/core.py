@@ -1,9 +1,10 @@
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from fastapi import Depends, HTTPException, status, Response
+from fastapi import Depends, HTTPException, Response, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from firebase_admin import auth, credentials, initialize_app
+
+from ...types import User
 from ..base import BaseAuthProvider
 from .settings import FirebaseAuthProviderSettings
-from ...types import User
 
 
 class FirebaseAuthProvider(BaseAuthProvider):

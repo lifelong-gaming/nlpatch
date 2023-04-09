@@ -1,6 +1,6 @@
+from ..settings import AuthProviderType, GlobalSettings
 from .base import BaseAuthProvider
 from .firebase import FirebaseAuthProvider, FirebaseAuthProviderSettings
-from ..settings import GlobalSettings, AuthProviderType
 
 
 def create_auth_provider(settings: GlobalSettings) -> BaseAuthProvider:
