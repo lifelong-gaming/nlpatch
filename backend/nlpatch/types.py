@@ -2,11 +2,13 @@ from collections.abc import Mapping
 from typing import AbstractSet, Any, Dict, Optional, Union
 
 from pydantic import BaseModel as _BaseModel
+from pydantic import Field
 
+from .fields import Bytes, Id, Timestamp, UserId
 from .utils import Camelizer
 
 
-class BaseModel(_BaseModel):
+class BaseType(_BaseModel):
     class Config:
         allow_mutation = False
         alias_generator = Camelizer(["id"])
@@ -23,7 +25,7 @@ class BaseModel(_BaseModel):
         exclude_defaults: bool = False,
         exclude_none: bool = False,
     ) -> Dict[str, Any]:
-        return super(BaseModel, self).dict(
+        return super(BaseType, self).dict(
             include=include,
             exclude=exclude,
             by_alias=by_alias,
@@ -34,11 +36,25 @@ class BaseModel(_BaseModel):
         )
 
 
-class User(BaseModel):
-    id: str
+class User(BaseType):
+    id: UserId
 
 
-class ModelMetadata(BaseModel):
-    id: str
+class BaseEntity(BaseType):
+    id: Id = Field(default_factory=Id.generate)
+    created_at: Timestamp = Field(default_factory=Timestamp.now)
+    updated_at: Timestamp = Field(default_factory=Timestamp.now)
+
+
+class ModelMetadata(BaseEntity):
     name: str
     description: str
+    version: str
+
+
+class BaseUserEntity(BaseEntity):
+    owner: User
+
+
+class Blob(BaseEntity):
+    data: Bytes
