@@ -1,6 +1,8 @@
-import { AppBar, Toolbar, Typography, Button } from "@mui/material"
+import { AppBar, Toolbar, Typography } from "@mui/material"
 import { useAuthContext } from "@/src/contexts/AuthContext"
-import LogoutButton from "@/components/LogoutButton"
+import Link from "next/link"
+import AccountMenu from "./AccountMenu"
+
 
 const AppHeader = () => {
   const { user } = useAuthContext()
@@ -10,7 +12,7 @@ const AppHeader = () => {
         <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
           NLPatch
         </Typography>
-        {user && <LogoutButton />}
+        {user && <AccountMenu />}
       </Toolbar>
     </AppBar>
   )
