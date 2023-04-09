@@ -1,6 +1,7 @@
 import { ReactNode, createContext, useState, useContext, useEffect } from "react"
 import { useAuthContext, UserType } from "./AuthContext"
 import User from "@/types/User"
+import ModelMetadata from "@/types/ModelMetadata"
 import { resolve } from "path";
 
 class APIHandler {
@@ -36,11 +37,24 @@ class APIHandler {
 
   getUserMe: () => Promise<User> = () => {
     return this.withRefresh(() => fetch(
-      this.constructUrl("/user/me"), {
+      this.constructUrl("/v1/user/me"), {
         headers: this.constructHeaders()
       }
     ).then((res: Response) => {
       if (res.status === 401) return Promise.reject("Unauthorized")
+      if (res.status !== 200) return Promise.reject(`${res.statusText} (${res.status})`)
+      return res.json()
+    }))
+  }
+
+  listModelMetadata: () => Promise<ModelMetadata[]> = () => {
+    return this.withRefresh(() => fetch(
+      this.constructUrl("/v1/models"), {
+        headers: this.constructHeaders()
+      }
+    ).then((res: Response) => {
+      if (res.status === 401) return Promise.reject("Unauthorized")
+      if (res.status !== 200) return Promise.reject(`${res.statusText} (${res.status})`)
       return res.json()
     }))
   }
