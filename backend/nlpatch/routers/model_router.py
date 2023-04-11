@@ -8,7 +8,7 @@ from ..storages.base import BaseStorage
 from ..types import ModelMetadata, ModelMetadataDetail, User
 
 
-def generate_router(auth_provider: BaseAuthProvider, storage: BaseStorage) -> APIRouter:
+def generate_model_router(auth_provider: BaseAuthProvider, storage: BaseStorage) -> APIRouter:
     router = APIRouter()
 
     @router.get("/", response_model=Sequence[ModelMetadata])

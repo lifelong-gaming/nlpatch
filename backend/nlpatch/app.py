@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .auth_providers.factories import create_auth_provider
-from .routers.model_router import generate_router as generate_model_router
+from .routers.model_router import generate_model_router
 from .settings import GlobalSettings
 from .storages.factories import create_storage
 from .types import User
