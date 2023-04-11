@@ -2,7 +2,8 @@ import os
 from collections.abc import Sequence
 from typing import List
 
-from ...types import ModelMetadata
+from ...fields import Id
+from ...types import ModelMetadata, ModelMetadataDetail
 from ..base import BaseStorage
 
 
@@ -34,3 +35,8 @@ class LocalFileStorage(BaseStorage):
             with open(os.path.join(dirname, fn), "rb") as f:
                 res.append(ModelMetadata.parse_raw(f.read()))
         return res
+
+    def get_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
+        dirname = os.path.join(self.root_path, "model_metadata")
+        with open(os.path.join(dirname, f"{model_id}.json"), "rb") as f:
+            return ModelMetadataDetail.parse_raw(f.read())

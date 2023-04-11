@@ -1,5 +1,5 @@
 import uuid
-from abc import ABCMeta, abstractmethod
+from abc import abstractmethod
 from base64 import (
     b64encode,
     standard_b64decode,
@@ -10,15 +10,17 @@ from base64 import (
 from collections.abc import Callable, Generator
 from datetime import datetime as _datetime
 from datetime import timezone as _timezone
+from enum import Enum
 from typing import Any, Generic, TypeVar, Union
 from uuid import UUID
 
 from dateutil.parser import parse as parse_datetime
+from humps import camelize
 
 T = TypeVar("T")
 
 
-class Serializable(Generic[T], metaclass=ABCMeta):
+class Serializable(Generic[T]):
     @abstractmethod
     def serialize(self) -> T:
         raise NotImplementedError
@@ -236,3 +238,9 @@ class Bytes(bytes, Serializable[str]):
 
     def serialize(self) -> str:
         return self.standard_b64encoded
+
+
+class InputType(str, Enum):
+    LONG_TEXT = camelize("long_text")
+    SHORT_TEXT = camelize("short_text")
+    NUMBER = camelize("number")

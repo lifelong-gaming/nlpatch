@@ -1,10 +1,10 @@
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from typing import AbstractSet, Any, Dict, Optional, Union
 
 from pydantic import BaseModel as _BaseModel
 from pydantic import Field
 
-from .fields import Bytes, Id, Timestamp, UserId
+from .fields import Bytes, Id, InputType, Serializable, Timestamp, UserId
 from .utils import Camelizer
 
 
@@ -25,14 +25,19 @@ class BaseType(_BaseModel):
         exclude_defaults: bool = False,
         exclude_none: bool = False,
     ) -> Dict[str, Any]:
-        return super(BaseType, self).dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            skip_defaults=skip_defaults,
-            exclude_unset=exclude_unset,
-            exclude_defaults=exclude_defaults,
-            exclude_none=exclude_none,
+        return dict(
+            (k, v.serialize() if isinstance(v, Serializable) else v)
+            for k, v in super(BaseType, self)
+            .dict(
+                include=include,
+                exclude=exclude,
+                by_alias=by_alias,
+                skip_defaults=skip_defaults,
+                exclude_unset=exclude_unset,
+                exclude_defaults=exclude_defaults,
+                exclude_none=exclude_none,
+            )
+            .items()
         )
 
 
@@ -46,10 +51,31 @@ class BaseEntity(BaseType):
     updated_at: Timestamp = Field(default_factory=Timestamp.now)
 
 
+class BaseInput(BaseEntity):
+    field_name: str
+    type: InputType
+
+
+class LongTextInput(BaseInput):
+    type = Field(InputType.LONG_TEXT, const=True)
+
+
+class ShortTextInput(BaseInput):
+    type = Field(InputType.SHORT_TEXT, const=True)
+
+
+class NumberInput(BaseInput):
+    type = Field(InputType.NUMBER, const=True)
+
+
 class ModelMetadata(BaseEntity):
     name: str
     description: str
     version: str
+
+
+class ModelMetadataDetail(ModelMetadata):
+    inputs: Sequence[BaseInput]
 
 
 class BaseUserEntity(BaseEntity):

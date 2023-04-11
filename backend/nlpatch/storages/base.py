@@ -1,10 +1,15 @@
 from abc import ABCMeta, abstractmethod
 from collections.abc import Sequence
 
-from ..types import ModelMetadata
+from ..fields import Id
+from ..types import ModelMetadata, ModelMetadataDetail
 
 
 class BaseStorage(metaclass=ABCMeta):
     @abstractmethod
     def list_model_metadata(self) -> Sequence[ModelMetadata]:
+        ...
+
+    @abstractmethod
+    def get_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
         ...
