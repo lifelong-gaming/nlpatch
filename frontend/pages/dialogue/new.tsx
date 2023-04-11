@@ -7,17 +7,19 @@ import { useSnackbar } from 'notistack';
 import { Button, Typography } from '@mui/material';
 import ModelMetadataCards from '@/components/ModelMetadataCards';
 import ModelMetadata from '@/types/ModelMetadata'
+import LoadingIndicator from '@/components/LoadingIndicator'
 
-export default function Home() {
+export default function DialogueNew() {
   const { api } = useApiContext()
-  const [modelMetadataList, setModelMetadataList] = useState<ModelMetadata[]>([])
+  const [modelMetadataList, setModelMetadataList] = useState<ModelMetadata[] | null>(null)
   const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     if (!api) {
       return
     }
     api.listModelMetadata().then((res) => {
-      setModelMetadataList(res)
+      setTimeout(() => {
+      setModelMetadataList(res) }, 10000)
     }).catch((err) => {
       enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
     })
@@ -31,9 +33,10 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         {
-          modelMetadataList.length > 0?
-            <ModelMetadataCards modelMetadataList={modelMetadataList}></ModelMetadataCards>:
-            "モデルがありません"
+          modelMetadataList === null ? <LoadingIndicator></LoadingIndicator>:
+            modelMetadataList.length > 0?
+              <ModelMetadataCards modelMetadataList={modelMetadataList}></ModelMetadataCards>:
+              <Typography>{"モデルがありません"}</Typography>
         }
         <Button>start dialogue</Button>
       </main>
