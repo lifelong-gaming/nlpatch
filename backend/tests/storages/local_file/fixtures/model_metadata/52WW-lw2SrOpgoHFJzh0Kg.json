@@ -1,0 +1,1 @@
+{"id": "52WW-lw2SrOpgoHFJzh0Kg", "createdAt": 1681102727441831, "updatedAt": 1681102727441835, "name": "ping", "description": "this is the ping", "version": "0.1.0", "inputs": [{"id": "_IIA5p11QgSUlFm7k2wj3A", "createdAt": 1681102727441761, "updatedAt": 1681102727441772, "fieldName": "message", "type": "longText"}]}
