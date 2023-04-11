@@ -34,12 +34,16 @@ class ModelMetadataDetailFactory(NlPatchModelFactory[ModelMetadataDetail]):
 
 
 @pytest.fixture(scope="session")
-def model_metadata_detail_list() -> Generator[Sequence[ModelMetadataDetail], None, None]:
-    data = [
-        ModelMetadataDetailFactory.build(id=Id("52WW-lw2SrOpgoHFJzh0Kg"), inputs=[]),
-        ModelMetadataDetailFactory.build(id=Id("C9mJEx_gTX2gi5vFj2AHqw"), inputs=[]),
-        ModelMetadataDetailFactory.build(id=Id("mJTIBVyBRgWpHq8zERv0kg"), inputs=[]),
-    ]
+def model_metadata_ids() -> Generator[Sequence[Id], None, None]:
+    ids = [Id("52WW-lw2SrOpgoHFJzh0Kg"), Id("C9mJEx_gTX2gi5vFj2AHqw"), Id("mJTIBVyBRgWpHq8zERv0kg")]
+    yield ids
+
+
+@pytest.fixture(scope="session")
+def model_metadata_detail_list(
+    model_metadata_ids: Sequence[Id],
+) -> Generator[Sequence[ModelMetadataDetail], None, None]:
+    data = [ModelMetadataDetailFactory.build(id=x, inputs=[]) for x in model_metadata_ids]
     yield data
 
 
@@ -76,6 +80,8 @@ def valid_auth_provider() -> Generator[BaseAuthProvider, None, None]:
         def get_user_token(
             self, response: Response, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))
         ) -> User:
+            if credentials is None:
+                raise HTTPException(status_code=401, detail="Invalid credentials")
             return User(id=UserId("test-user"))
 
     yield MockAuthProvider()
