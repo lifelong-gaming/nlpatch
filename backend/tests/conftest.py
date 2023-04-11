@@ -3,6 +3,8 @@ from typing import Any, Dict, Generic, TypeVar
 from unittest.mock import MagicMock
 
 import pytest
+from fastapi import Depends, HTTPException, Response
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic_factories import ModelFactory
 
 from nlpatch.auth_providers.base import BaseAuthProvider
@@ -70,13 +72,21 @@ def storage(
 
 @pytest.fixture(scope="session")
 def valid_auth_provider() -> Generator[BaseAuthProvider, None, None]:
-    from fastapi import Depends, Response
-    from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
-
     class MockAuthProvider(BaseAuthProvider):
         def get_user_token(
             self, response: Response, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))
         ) -> User:
             return User(id=UserId("test-user"))
+
+    yield MockAuthProvider()
+
+
+@pytest.fixture(scope="session")
+def invalid_auth_provider() -> Generator[BaseAuthProvider, None, None]:
+    class MockAuthProvider(BaseAuthProvider):
+        def get_user_token(
+            self, response: Response, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))
+        ) -> User:
+            raise HTTPException(status_code=401, detail="Invalid credentials")
 
     yield MockAuthProvider()
