@@ -2,7 +2,7 @@ from typing import Type
 
 from ..exceptions import BaseError
 from ..fields import Id
-from ..types import BaseType, Blob
+from ..types import BaseType, Blob, ModelMetadata
 
 
 class StorageError(BaseError):
@@ -23,3 +23,10 @@ class BlobNotFoundError(EntityNotFoundError):
 
     def __init__(self, blob_id: Id):
         super().__init__(blob_id, Blob)
+
+
+class ModelMetadataNotFoundError(EntityNotFoundError):
+    """Raised when a model metadata is not found in storage."""
+
+    def __init__(self, model_id: Id):
+        super().__init__(model_id, ModelMetadata)
