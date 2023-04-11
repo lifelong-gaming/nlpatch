@@ -46,7 +46,9 @@ dev=[
     "freezegun",
     "uvicorn",
     "psycopg2-binary",
-    "types-python-dateutil"
+    "types-python-dateutil",
+    "httpx",
+    "pydantic-factories"
 ]
 openai=[
     "openai",
