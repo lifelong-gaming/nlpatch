@@ -36,7 +36,7 @@ class LocalFileStorage(BaseStorage):
                 res.append(ModelMetadata.parse_raw(f.read()))
         return res
 
-    def get_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
+    def retrieve_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
         dirname = os.path.join(self.root_path, "model_metadata")
         with open(os.path.join(dirname, f"{model_id}.json"), "rb") as f:
             return ModelMetadataDetail.parse_raw(f.read())

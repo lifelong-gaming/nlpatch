@@ -11,5 +11,5 @@ class BaseStorage(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def get_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
+    def retrieve_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
         ...

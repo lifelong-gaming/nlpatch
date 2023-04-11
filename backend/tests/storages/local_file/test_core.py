@@ -31,7 +31,7 @@ def test_local_storage_list_model_metadata_returns_empty_if_directory_not_exists
         assert actual == []
 
 
-def test_local_storage_get_model_metadata() -> None:
+def test_local_storage_retrieve_model_metadata() -> None:
     model_id = Id("52WW-lw2SrOpgoHFJzh0Kg")
     expected = ModelMetadataDetail(
         id=model_id,
@@ -51,5 +51,5 @@ def test_local_storage_get_model_metadata() -> None:
         ],
     )
     sut = LocalFileStorage(root_path=fixture_path)
-    actual = sut.get_model_metadata(model_id)
+    actual = sut.retrieve_model_metadata(model_id)
     assert actual == expected
