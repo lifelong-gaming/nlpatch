@@ -2,7 +2,7 @@ from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from .auth_providers.factories import create_auth_provider
-from .model_router import generate_router
+from .routers.model_router import generate_router as generate_model_router
 from .settings import GlobalSettings
 from .storages.factories import create_storage
 from .types import User
@@ -25,6 +25,6 @@ def generate_app(settings: GlobalSettings) -> FastAPI:
     async def user_me(user: User = Depends(auth_provider.get_user_token)) -> User:
         return user
 
-    app.include_router(generate_router(auth_provider=auth_provider, storage=storage), prefix="/api/v1/models")
+    app.include_router(generate_model_router(auth_provider=auth_provider, storage=storage), prefix="/api/v1/models")
 
     return app
