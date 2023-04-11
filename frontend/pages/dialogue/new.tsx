@@ -18,8 +18,7 @@ export default function DialogueNew() {
       return
     }
     api.listModelMetadata().then((res) => {
-      setTimeout(() => {
-      setModelMetadataList(res) }, 10000)
+      setModelMetadataList(res)
     }).catch((err) => {
       enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
     })
