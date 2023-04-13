@@ -9,7 +9,7 @@ from nlpatch.storages.base import BaseStorage
 from nlpatch.types import Dialogue
 
 
-def test_dialogue_router_list_dialogues(
+def test_list_dialogues(
     dialogue_list: Sequence[Dialogue],
     storage: BaseStorage,
     valid_auth_provider: BaseAuthProvider,
@@ -24,7 +24,7 @@ def test_dialogue_router_list_dialogues(
     assert response.json() == expected
 
 
-def test_dialogue_router_list_dialogues_returns_401_when_invalid_auth(
+def test_list_dialogues_returns_401_when_invalid_auth(
     storage: BaseStorage, invalid_auth_provider: BaseAuthProvider
 ) -> None:
     sut = generate_dialogue_router(auth_provider=invalid_auth_provider, storage=storage)
