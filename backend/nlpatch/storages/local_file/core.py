@@ -43,3 +43,6 @@ class LocalFileStorage(BaseStorage):
 
     def list_dialogues(self, user_id: UserId) -> Sequence[Dialogue]:
         raise NotImplementedError()
+
+    def retrieve_dialogue(self, user_id: UserId, dialogue_id: Id) -> Dialogue:
+        raise NotImplementedError()

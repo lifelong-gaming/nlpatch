@@ -2,7 +2,7 @@ from typing import Type
 
 from ..exceptions import BaseError
 from ..fields import Id
-from ..types import BaseType, Blob, ModelMetadata, Dialogue
+from ..types import BaseType, Blob, Dialogue, ModelMetadata
 
 
 class StorageError(BaseError):

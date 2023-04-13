@@ -10,7 +10,10 @@ from pydantic_factories import ModelFactory
 from nlpatch.auth_providers.base import BaseAuthProvider
 from nlpatch.fields import Id, Timestamp, UserId
 from nlpatch.storages.base import BaseStorage
-from nlpatch.storages.exceptions import ModelMetadataNotFoundError
+from nlpatch.storages.exceptions import (
+    DialogueNotFoundError,
+    ModelMetadataNotFoundError,
+)
 from nlpatch.types import Dialogue, ModelMetadata, ModelMetadataDetail, User
 
 T = TypeVar("T")
@@ -121,6 +124,14 @@ def storage(
         return [d for d in dialogue_list if d.owner.id == user_id]
 
     s.list_dialogues.side_effect = list_dialogues
+
+    def retrieve_dialogue(dialogue_id: Id, user_id: UserId) -> Dialogue:
+        for d in dialogue_list:
+            if d.id == dialogue_id and d.owner.id == user_id:
+                return d
+        raise DialogueNotFoundError(dialogue_id=dialogue_id)
+
+    s.retrieve_dialogue.side_effect = retrieve_dialogue
 
     def retrieve_model_metadata(model_id: Id) -> ModelMetadataDetail:
         if model_id == Id("52WW-lw2SrOpgoHFJzh0Kg"):
