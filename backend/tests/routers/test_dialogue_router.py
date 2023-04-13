@@ -22,3 +22,14 @@ def test_dialogue_router_list_dialogues(
     response = client.get("/api/v1/dialogues", headers={"Authorization": "Bearer valid_token"})
     assert response.status_code == 200
     assert response.json() == expected
+
+
+def test_dialogue_router_list_dialogues_returns_401_when_invalid_auth(
+    storage: BaseStorage, invalid_auth_provider: BaseAuthProvider
+) -> None:
+    sut = generate_dialogue_router(auth_provider=invalid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.get("/api/v1/dialogues", headers={"Authorization": "Bearer invalid_token"})
+    assert response.status_code == 401
