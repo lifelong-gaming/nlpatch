@@ -23,7 +23,11 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
     @router.get("/{dialogue_id}", response_model=Dialogue)
     def retrieve_dialogue(dialogue_id: str, user: User = Depends(auth_provider.get_user_token)) -> Dialogue:
         try:
-            res = storage.retrieve_dialogue(dialogue_id=Id(dialogue_id), user_id=user.id)
+            id_ = Id(dialogue_id)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        try:
+            res = storage.retrieve_dialogue(dialogue_id=id_, user_id=user.id)
         except DialogueNotFoundError as e:
             raise HTTPException(status_code=404, detail=str(e))
         return res
