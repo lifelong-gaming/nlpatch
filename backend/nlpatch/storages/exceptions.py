@@ -2,7 +2,7 @@ from typing import Type
 
 from ..exceptions import BaseError
 from ..fields import Id
-from ..types import BaseType, Blob, ModelMetadata
+from ..types import BaseType, Blob, ModelMetadata, Dialogue
 
 
 class StorageError(BaseError):
@@ -30,3 +30,10 @@ class ModelMetadataNotFoundError(EntityNotFoundError):
 
     def __init__(self, model_id: Id):
         super().__init__(model_id, ModelMetadata)
+
+
+class DialogueNotFoundError(EntityNotFoundError):
+    """Raised when a dialogue is not found in storage."""
+
+    def __init__(self, dialogue_id: Id):
+        super().__init__(dialogue_id, Dialogue)
