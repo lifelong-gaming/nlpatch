@@ -2,8 +2,8 @@ import os
 from collections.abc import Sequence
 from typing import List
 
-from ...fields import Id
-from ...types import ModelMetadata, ModelMetadataDetail
+from ...fields import Id, UserId
+from ...types import Dialogue, ModelMetadata, ModelMetadataDetail
 from ..base import BaseStorage
 
 
@@ -40,3 +40,6 @@ class LocalFileStorage(BaseStorage):
         dirname = os.path.join(self.root_path, "model_metadata")
         with open(os.path.join(dirname, f"{model_id}.json"), "rb") as f:
             return ModelMetadataDetail.parse_raw(f.read())
+
+    def list_dialogues(self, user_id: UserId) -> Sequence[Dialogue]:
+        raise NotImplementedError()

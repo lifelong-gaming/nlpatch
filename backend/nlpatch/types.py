@@ -84,3 +84,7 @@ class BaseUserEntity(BaseEntity):
 
 class Blob(BaseEntity):
     data: Bytes
+
+
+class Dialogue(BaseUserEntity):
+    model: ModelMetadata

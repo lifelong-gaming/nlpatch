@@ -11,7 +11,7 @@ from nlpatch.auth_providers.base import BaseAuthProvider
 from nlpatch.fields import Id, Timestamp, UserId
 from nlpatch.storages.base import BaseStorage
 from nlpatch.storages.exceptions import ModelMetadataNotFoundError
-from nlpatch.types import ModelMetadata, ModelMetadataDetail, User
+from nlpatch.types import Dialogue, ModelMetadata, ModelMetadataDetail, User
 
 T = TypeVar("T")
 
@@ -31,6 +31,34 @@ class ModelMetadataFactory(NlPatchModelFactory[ModelMetadata]):
 
 class ModelMetadataDetailFactory(NlPatchModelFactory[ModelMetadataDetail]):
     __model__ = ModelMetadataDetail
+
+
+class DialogueFactory(NlPatchModelFactory[Dialogue]):
+    __model__ = Dialogue
+
+
+class UserFactory(NlPatchModelFactory[User]):
+    __model__ = User
+
+
+@pytest.fixture(scope="session")
+def user_id() -> Generator[UserId, None, None]:
+    yield UserId("test")
+
+
+@pytest.fixture(scope="session")
+def user(user_id: UserId) -> Generator[User, None, None]:
+    yield User(id=user_id)
+
+
+@pytest.fixture(scope="session")
+def other_user_id() -> Generator[UserId, None, None]:
+    yield UserId("other")
+
+
+@pytest.fixture(scope="session")
+def other_user(other_user_id: UserId) -> Generator[User, None, None]:
+    yield User(id=other_user_id)
 
 
 @pytest.fixture(scope="session")
@@ -55,11 +83,44 @@ def model_metadata_list(
 
 
 @pytest.fixture(scope="session")
+def dialogue_ids() -> Generator[Sequence[Id], None, None]:
+    yield [
+        Id("hCy6ZRX6RpWiNCkEx8PwyA"),
+        Id('UBwpUv57Sh6XNzGsUmF5jw'),
+        Id('or9FYegbTkWQh1_CFIsJiw'),
+        Id('93KkiQUbQ3GmdOxkV-ET9Q'),
+        Id('IhgttuvNSxGZzdqGVhz4yw'),
+        Id('s9H2iEswRjStaXPigzknVA'),
+    ]
+
+
+@pytest.fixture(scope="session")
+def dialogue_list(
+    model_metadata_list: Sequence[ModelMetadata], dialogue_ids: Sequence[Id], user: User, other_user: User
+) -> Generator[Sequence[Dialogue], None, None]:
+    yield [
+        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[0], owner=user),
+        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[1], owner=user),
+        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[2], owner=user),
+        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[3], owner=user),
+        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[4], owner=other_user),
+        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[5], owner=other_user),
+    ]
+
+
+@pytest.fixture(scope="session")
 def storage(
-    model_metadata_detail_list: Sequence[ModelMetadataDetail], model_metadata_list: Sequence[ModelMetadata]
+    model_metadata_detail_list: Sequence[ModelMetadataDetail],
+    model_metadata_list: Sequence[ModelMetadata],
+    dialogue_list: Sequence[Dialogue],
 ) -> Generator[BaseStorage, None, None]:
     s = MagicMock(spec=BaseStorage)
     s.list_model_metadata.return_value = model_metadata_list
+
+    def list_dialogues(user_id: UserId) -> Sequence[Dialogue]:
+        return [d for d in dialogue_list if d.owner.id == user_id]
+
+    s.list_dialogues.side_effect = list_dialogues
 
     def retrieve_model_metadata(model_id: Id) -> ModelMetadataDetail:
         if model_id == Id("52WW-lw2SrOpgoHFJzh0Kg"):
@@ -75,14 +136,14 @@ def storage(
 
 
 @pytest.fixture(scope="session")
-def valid_auth_provider() -> Generator[BaseAuthProvider, None, None]:
+def valid_auth_provider(user: User) -> Generator[BaseAuthProvider, None, None]:
     class MockAuthProvider(BaseAuthProvider):
         def get_user_token(
             self, response: Response, credentials: HTTPAuthorizationCredentials = Depends(HTTPBearer(auto_error=False))
         ) -> User:
             if credentials is None:
                 raise HTTPException(status_code=401, detail="Invalid credentials")
-            return User(id=UserId("test-user"))
+            return user
 
     yield MockAuthProvider()
 
