@@ -9,7 +9,7 @@ from nlpatch.storages.base import BaseStorage
 from nlpatch.types import Dialogue
 
 
-def test_dialogue_router_retrieve_dialogue(
+def test_dialogue_router_list_dialogues(
     dialogue_list: Sequence[Dialogue],
     storage: BaseStorage,
     valid_auth_provider: BaseAuthProvider,
