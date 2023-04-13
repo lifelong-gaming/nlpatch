@@ -1,10 +1,11 @@
 from collections.abc import Sequence
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from ..auth_providers.base import BaseAuthProvider
 from ..fields import Id
 from ..storages.base import BaseStorage
+from ..storages.exceptions import DialogueNotFoundError
 from ..types import BaseType, Dialogue, User
 
 
@@ -21,6 +22,10 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
 
     @router.get("/{dialogue_id}", response_model=Dialogue)
     def retrieve_dialogue(dialogue_id: str, user: User = Depends(auth_provider.get_user_token)) -> Dialogue:
-        return storage.retrieve_dialogue(dialogue_id=Id(dialogue_id), user_id=user.id)
+        try:
+            res = storage.retrieve_dialogue(dialogue_id=Id(dialogue_id), user_id=user.id)
+        except DialogueNotFoundError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+        return res
 
     return router

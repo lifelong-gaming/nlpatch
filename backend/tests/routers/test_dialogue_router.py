@@ -79,3 +79,14 @@ def test_retrieve_dialogue_returns_401_when_no_auth_header(
     client = TestClient(app)
     response = client.get(f"/api/v1/dialogues/{dialogue_ids[0]}")
     assert response.status_code == 401
+
+
+def test_retrieve_dialogue_returns_404_when_dialogue_not_found(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.get("/api/v1/dialogues/UJuydKCKSjCQ8HeptXFc-Q", headers={"Authorization": "Bearer valid_token"})
+    assert response.status_code == 404
