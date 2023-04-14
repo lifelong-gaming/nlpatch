@@ -102,12 +102,12 @@ def dialogue_list(
     model_metadata_list: Sequence[ModelMetadata], dialogue_ids: Sequence[Id], user: User, other_user: User
 ) -> Generator[Sequence[Dialogue], None, None]:
     yield [
-        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[0], owner=user),
-        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[1], owner=user),
-        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[2], owner=user),
-        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[3], owner=user),
-        DialogueFactory.build(model=model_metadata_list[0], id=dialogue_ids[4], owner=other_user),
-        DialogueFactory.build(model=model_metadata_list[1], id=dialogue_ids[5], owner=other_user),
+        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[0], owner_id=user.id),
+        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[1], owner_id=user.id),
+        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[2], owner_id=user.id),
+        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[3], owner_id=user.id),
+        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[4], owner_id=other_user.id),
+        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[5], owner_id=other_user.id),
     ]
 
 
@@ -121,13 +121,13 @@ def storage(
     s.list_model_metadata.return_value = model_metadata_list
 
     def list_dialogues(user_id: UserId) -> Sequence[Dialogue]:
-        return [d for d in dialogue_list if d.owner.id == user_id]
+        return [d for d in dialogue_list if d.owner_id == user_id]
 
     s.list_dialogues.side_effect = list_dialogues
 
     def retrieve_dialogue(dialogue_id: Id, user_id: UserId) -> Dialogue:
         for d in dialogue_list:
-            if d.id == dialogue_id and d.owner.id == user_id:
+            if d.id == dialogue_id and d.owner_id == user_id:
                 return d
         raise DialogueNotFoundError(dialogue_id=dialogue_id)
 

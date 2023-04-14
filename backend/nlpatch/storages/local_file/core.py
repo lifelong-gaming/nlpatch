@@ -46,3 +46,6 @@ class LocalFileStorage(BaseStorage):
 
     def retrieve_dialogue(self, user_id: UserId, dialogue_id: Id) -> Dialogue:
         raise NotImplementedError()
+
+    def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
+        raise NotImplementedError()

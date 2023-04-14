@@ -11,7 +11,7 @@ from .utils import Camelizer
 class BaseType(_BaseModel):
     class Config:
         allow_mutation = False
-        alias_generator = Camelizer(["id"])
+        alias_generator = Camelizer([])
         allow_population_by_field_name = True
 
     def dict(
@@ -79,7 +79,7 @@ class ModelMetadataDetail(ModelMetadata):
 
 
 class BaseUserEntity(BaseEntity):
-    owner: User
+    owner_id: UserId
 
 
 class Blob(BaseEntity):
@@ -87,4 +87,4 @@ class Blob(BaseEntity):
 
 
 class Dialogue(BaseUserEntity):
-    model: ModelMetadata
+    model_id: Id

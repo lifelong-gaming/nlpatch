@@ -1,6 +1,7 @@
 from collections.abc import Sequence
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 
 from ..auth_providers.base import BaseAuthProvider
 from ..fields import Id
@@ -11,6 +12,10 @@ from ..types import BaseType, Dialogue, User
 
 class DialogueListResponse(BaseType):
     dialogues: Sequence[Dialogue]
+
+
+class DialogueCreateRequest(BaseType):
+    model_id: str
 
 
 def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStorage) -> APIRouter:
@@ -31,5 +36,13 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
         except DialogueNotFoundError as e:
             raise HTTPException(status_code=404, detail=str(e))
         return res
+
+    @router.post("/", response_model=Dialogue)
+    def create_dialogue(
+        query: DialogueCreateRequest, user: User = Depends(auth_provider.get_user_token)
+    ) -> JSONResponse:
+        d = Dialogue(owner_id=user.id, model_id=Id(query.model_id))
+        storage.create_dialogue(dialogue=d)
+        return JSONResponse(status_code=status.HTTP_201_CREATED, content=d.dict())
 
     return router
