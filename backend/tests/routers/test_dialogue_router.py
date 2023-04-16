@@ -191,3 +191,19 @@ def test_create_dialogue_returns_400_when_invalid_model_id(
         "/api/v1/dialogues/", headers={"Authorization": "Bearer valid_token"}, json={"modelId": "invalid"}
     )
     assert response.status_code == 400
+
+
+def test_create_dialogue_returns_400_when_model_not_exists(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, model_metadata_ids: Sequence[Id]
+) -> None:
+    id_ = Id.generate()
+    while id_ in model_metadata_ids:
+        id_ = Id.generate()
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.post(
+        "/api/v1/dialogues/", headers={"Authorization": "Bearer valid_token"}, json={"modelId": str(id_)}
+    )
+    assert response.status_code == 400

@@ -6,7 +6,7 @@ from fastapi.responses import JSONResponse
 from ..auth_providers.base import BaseAuthProvider
 from ..fields import Id
 from ..storages.base import BaseStorage
-from ..storages.exceptions import DialogueNotFoundError
+from ..storages.exceptions import DialogueNotFoundError, ModelMetadataNotFoundError
 from ..types import BaseType, Dialogue, User
 
 
@@ -44,6 +44,10 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
         try:
             model_id = Id(query.model_id)
         except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        try:
+            storage.retrieve_model_metadata(model_id)
+        except ModelMetadataNotFoundError as e:
             raise HTTPException(status_code=400, detail=str(e))
         d = Dialogue(owner_id=user.id, model_id=model_id)
         storage.create_dialogue(dialogue=d)
