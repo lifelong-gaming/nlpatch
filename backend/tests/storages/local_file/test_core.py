@@ -4,10 +4,10 @@ from typing import Sequence
 
 import pytest
 
-from nlpatch.fields import Id, InputType, Timestamp
+from nlpatch.fields import Id
 from nlpatch.storages.exceptions import ModelMetadataNotFoundError
 from nlpatch.storages.local_file import LocalFileStorage
-from nlpatch.types import BaseInput, ModelMetadata, ModelMetadataDetail
+from nlpatch.types import ModelMetadata, ModelMetadataDetail
 
 wd = os.path.dirname(os.path.abspath(__file__))
 fixture_path = os.path.join(wd, "fixtures")
@@ -32,25 +32,9 @@ def test_list_model_metadata_returns_empty_if_directory_not_exists() -> None:
         assert actual == []
 
 
-def test_retrieve_model_metadata() -> None:
+def test_retrieve_model_metadata(model_metadata_detail_list: Sequence[ModelMetadataDetail]) -> None:
     model_id = Id("52WW-lw2SrOpgoHFJzh0Kg")
-    expected = ModelMetadataDetail(
-        id=model_id,
-        name="ping",
-        description="this is the ping",
-        created_at=Timestamp(1681102727441831),
-        updated_at=Timestamp(1681102727441835),
-        version="0.1.0",
-        inputs=[
-            BaseInput(
-                id=Id("_IIA5p11QgSUlFm7k2wj3A"),
-                created_at=Timestamp(1681102727441761),
-                updated_at=Timestamp(1681102727441772),
-                field_name="message",
-                type=InputType.LONG_TEXT,
-            )
-        ],
-    )
+    expected = model_metadata_detail_list[0]
     sut = LocalFileStorage(root_path=fixture_path)
     actual = sut.retrieve_model_metadata(model_id)
     assert actual == expected
