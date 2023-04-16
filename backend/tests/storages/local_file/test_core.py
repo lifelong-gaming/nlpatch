@@ -1,7 +1,10 @@
 import os
 from tempfile import TemporaryDirectory
 
+import pytest
+
 from nlpatch.fields import Id, InputType, Timestamp
+from nlpatch.storages.exceptions import ModelMetadataNotFoundError
 from nlpatch.storages.local_file import LocalFileStorage
 from nlpatch.types import BaseInput, ModelMetadata, ModelMetadataDetail
 
@@ -53,3 +56,10 @@ def test_local_storage_retrieve_model_metadata() -> None:
     sut = LocalFileStorage(root_path=fixture_path)
     actual = sut.retrieve_model_metadata(model_id)
     assert actual == expected
+
+
+def test_local_storage_retrieve_model_metadata_raises_error_if_file_not_exists() -> None:
+    model_id = Id("0iISHMyJRdmoAF8yoyy6jA")
+    sut = LocalFileStorage(root_path=fixture_path)
+    with pytest.raises(ModelMetadataNotFoundError):
+        sut.retrieve_model_metadata(model_id)

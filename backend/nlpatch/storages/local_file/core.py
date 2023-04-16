@@ -5,6 +5,7 @@ from typing import List
 from ...fields import Id, UserId
 from ...types import Dialogue, ModelMetadata, ModelMetadataDetail
 from ..base import BaseStorage
+from ..exceptions import ModelMetadataNotFoundError
 
 
 class LocalFileStorage(BaseStorage):
@@ -38,8 +39,11 @@ class LocalFileStorage(BaseStorage):
 
     def retrieve_model_metadata(self, model_id: Id) -> ModelMetadataDetail:
         dirname = os.path.join(self.root_path, "model_metadata")
-        with open(os.path.join(dirname, f"{model_id}.json"), "rb") as f:
-            return ModelMetadataDetail.parse_raw(f.read())
+        try:
+            with open(os.path.join(dirname, f"{model_id}.json"), "rb") as f:
+                return ModelMetadataDetail.parse_raw(f.read())
+        except FileNotFoundError:
+            raise ModelMetadataNotFoundError(model_id)
 
     def list_dialogues(self, user_id: UserId) -> Sequence[Dialogue]:
         raise NotImplementedError()
