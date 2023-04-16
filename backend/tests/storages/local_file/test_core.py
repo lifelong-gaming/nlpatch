@@ -32,8 +32,10 @@ def test_list_model_metadata_returns_empty_if_directory_not_exists() -> None:
         assert actual == []
 
 
-def test_retrieve_model_metadata(model_metadata_detail_list: Sequence[ModelMetadataDetail]) -> None:
-    model_id = Id("52WW-lw2SrOpgoHFJzh0Kg")
+def test_retrieve_model_metadata(
+    model_metadata_ids: Sequence[Id], model_metadata_detail_list: Sequence[ModelMetadataDetail]
+) -> None:
+    model_id = model_metadata_ids[0]
     expected = model_metadata_detail_list[0]
     sut = LocalFileStorage(root_path=fixture_path)
     actual = sut.retrieve_model_metadata(model_id)
