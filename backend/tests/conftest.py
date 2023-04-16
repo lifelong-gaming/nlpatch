@@ -14,7 +14,13 @@ from nlpatch.storages.exceptions import (
     DialogueNotFoundError,
     ModelMetadataNotFoundError,
 )
-from nlpatch.types import Dialogue, ModelMetadata, ModelMetadataDetail, User
+from nlpatch.types import (
+    Dialogue,
+    LongTextInput,
+    ModelMetadata,
+    ModelMetadataDetail,
+    User,
+)
 
 T = TypeVar("T")
 
@@ -74,7 +80,56 @@ def model_metadata_ids() -> Generator[Sequence[Id], None, None]:
 def model_metadata_detail_list(
     model_metadata_ids: Sequence[Id],
 ) -> Generator[Sequence[ModelMetadataDetail], None, None]:
-    data = [ModelMetadataDetailFactory.build(id=x, inputs=[]) for x in model_metadata_ids]
+    data = [
+        ModelMetadataDetailFactory.build(
+            id=model_metadata_ids[0],
+            created_at=Timestamp(1681102727441831),
+            updated_at=Timestamp(1681102727441835),
+            name="ping",
+            description="this is the ping",
+            version="0.1.0",
+            inputs=[
+                LongTextInput(
+                    id=Id("_IIA5p11QgSUlFm7k2wj3A"),
+                    created_at=Timestamp(1681102727441761),
+                    updated_at=Timestamp(1681102727441772),
+                    field_name="message",
+                )
+            ],
+        ),
+        ModelMetadataDetailFactory.build(
+            id=model_metadata_ids[1],
+            created_at=Timestamp(1681012647318673),
+            updated_at=Timestamp(1681012647318711),
+            name="echo",
+            description="this is the echo",
+            version="0.1.0",
+            inputs=[
+                LongTextInput(
+                    id=Id("O99SxID2QSChcx2aTSaFNA"),
+                    created_at=Timestamp(1681102727441761),
+                    updated_at=Timestamp(1681102727441772),
+                    field_name="message",
+                )
+            ],
+        ),
+        ModelMetadataDetailFactory.build(
+            id=model_metadata_ids[2],
+            created_at=Timestamp(1681012967478480),
+            updated_at=Timestamp(1681012967478493),
+            name="pong",
+            description="this is the pong",
+            version="0.1.1",
+            inputs=[
+                LongTextInput(
+                    id=Id("SEtNn-cGQp66V6flBNO2GQ"),
+                    created_at=Timestamp(1681102727441761),
+                    updated_at=Timestamp(1681102727441772),
+                    field_name="message",
+                )
+            ],
+        ),
+    ]
     yield data
 
 

@@ -1,5 +1,6 @@
 import os
 from tempfile import TemporaryDirectory
+from typing import Sequence
 
 import pytest
 
@@ -17,14 +18,11 @@ def test_local_file_settings() -> None:
     assert sut.root_path == "/tmp"
 
 
-def test_list_model_metadata() -> None:
-    expected = []
-    for fn in os.listdir(os.path.join(fixture_path, "model_metadata")):
-        with open(os.path.join(fixture_path, "model_metadata", fn), "rb") as f:
-            expected.append(ModelMetadata.parse_raw(f.read()))
+def test_list_model_metadata(model_metadata_list: Sequence[ModelMetadata]) -> None:
+    expected = sorted(model_metadata_list, key=lambda x: x.id)
     sut = LocalFileStorage(root_path=fixture_path)
     actual = sut.list_model_metadata()
-    assert actual == expected
+    assert sorted(actual, key=lambda x: x.id) == expected
 
 
 def test_list_model_metadata_returns_empty_if_directory_not_exists() -> None:
