@@ -207,3 +207,14 @@ def test_create_dialogue_returns_400_when_model_not_exists(
         "/api/v1/dialogues/", headers={"Authorization": "Bearer valid_token"}, json={"modelId": str(id_)}
     )
     assert response.status_code == 400
+
+
+def test_create_dialogue_returns_422_when_no_model_id(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.post("/api/v1/dialogues/", headers={"Authorization": "Bearer valid_token"}, json={})
+    assert response.status_code == 422
