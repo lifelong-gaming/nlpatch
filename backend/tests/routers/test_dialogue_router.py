@@ -167,3 +167,14 @@ def test_create_dialogue_returns_401_when_invalid_auth(
         json={"modelId": str(model_metadata_list[0].id)},
     )
     assert response.status_code == 401
+
+
+def test_create_dialogue_returns_401_when_no_auth_header(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, model_metadata_list: Sequence[ModelMetadata]
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.post("/api/v1/dialogues/", json={"modelId": str(model_metadata_list[0].id)})
+    assert response.status_code == 401
