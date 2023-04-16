@@ -111,7 +111,7 @@ def dialogue_list(
     ]
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def storage(
     model_metadata_detail_list: Sequence[ModelMetadataDetail],
     model_metadata_list: Sequence[ModelMetadata],

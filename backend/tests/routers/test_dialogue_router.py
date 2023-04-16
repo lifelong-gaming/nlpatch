@@ -13,6 +13,8 @@ from nlpatch.routers.dialogue_router import generate_dialogue_router
 from nlpatch.storages.base import BaseStorage
 from nlpatch.types import Dialogue, ModelMetadata, User
 
+from ..common import override_defaults
+
 
 def test_list_dialogues(
     dialogue_list: Sequence[Dialogue],
@@ -134,9 +136,7 @@ def test_create_dialogue(
     client = TestClient(app)
     dt = datetime(2021, 1, 1, 1, 23, 45, 678)
     ts = Timestamp(dt)
-    mocker.patch.object(Dialogue.__fields__["id"], "default_factory", return_value=Id("0iISHMyJRdmoAF8yoyy6jA"))
-    mocker.patch.object(Dialogue.__fields__["created_at"], "default_factory", return_value=ts)
-    mocker.patch.object(Dialogue.__fields__["updated_at"], "default_factory", return_value=ts)
+    override_defaults(mocker, Dialogue, {"id": Id("0iISHMyJRdmoAF8yoyy6jA"), "created_at": ts, "updated_at": ts})
     response = client.post(
         "/api/v1/dialogues/",
         headers={"Authorization": "Bearer valid_token"},
@@ -218,3 +218,34 @@ def test_create_dialogue_returns_422_when_no_model_id(
     client = TestClient(app)
     response = client.post("/api/v1/dialogues/", headers={"Authorization": "Bearer valid_token"}, json={})
     assert response.status_code == 422
+
+
+def test_create_dialogue_returns_201_with_extra_unused_field(
+    storage: BaseStorage,
+    valid_auth_provider: BaseAuthProvider,
+    model_metadata_ids: Sequence[Id],
+    mocker: MockerFixture,
+    user: User,
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    dt = datetime(2021, 1, 1, 1, 23, 45, 678)
+    ts = Timestamp(dt)
+    override_defaults(mocker, Dialogue, {"id": Id("0iISHMyJRdmoAF8yoyy6jA"), "created_at": ts, "updated_at": ts})
+    response = client.post(
+        "/api/v1/dialogues/",
+        headers={"Authorization": "Bearer valid_token"},
+        json={"modelId": str(model_metadata_ids[0]), "extra": "extra"},
+    )
+    assert response.status_code == 201
+    cast(MagicMock, storage.create_dialogue).assert_called_once_with(
+        dialogue=Dialogue(
+            id=Id("0iISHMyJRdmoAF8yoyy6jA"),
+            model_id=model_metadata_ids[0],
+            owner_id=user.id,
+            created_at=ts,
+            updated_at=ts,
+        )
+    )
