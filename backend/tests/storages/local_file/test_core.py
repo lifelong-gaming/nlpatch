@@ -12,12 +12,12 @@ wd = os.path.dirname(os.path.abspath(__file__))
 fixture_path = os.path.join(wd, "fixtures")
 
 
-def test_local_storage_settings() -> None:
+def test_local_file_settings() -> None:
     sut = LocalFileStorage(root_path="/tmp")
     assert sut.root_path == "/tmp"
 
 
-def test_local_storage_list_model_metadata() -> None:
+def test_list_model_metadata() -> None:
     expected = []
     for fn in os.listdir(os.path.join(fixture_path, "model_metadata")):
         with open(os.path.join(fixture_path, "model_metadata", fn), "rb") as f:
@@ -27,14 +27,14 @@ def test_local_storage_list_model_metadata() -> None:
     assert actual == expected
 
 
-def test_local_storage_list_model_metadata_returns_empty_if_directory_not_exists() -> None:
+def test_list_model_metadata_returns_empty_if_directory_not_exists() -> None:
     with TemporaryDirectory() as tmpdir:
         sut = LocalFileStorage(root_path=tmpdir)
         actual = sut.list_model_metadata()
         assert actual == []
 
 
-def test_local_storage_retrieve_model_metadata() -> None:
+def test_retrieve_model_metadata() -> None:
     model_id = Id("52WW-lw2SrOpgoHFJzh0Kg")
     expected = ModelMetadataDetail(
         id=model_id,
@@ -58,7 +58,7 @@ def test_local_storage_retrieve_model_metadata() -> None:
     assert actual == expected
 
 
-def test_local_storage_retrieve_model_metadata_raises_error_if_file_not_exists() -> None:
+def test_retrieve_model_metadata_raises_error_if_file_not_exists() -> None:
     model_id = Id("0iISHMyJRdmoAF8yoyy6jA")
     sut = LocalFileStorage(root_path=fixture_path)
     with pytest.raises(ModelMetadataNotFoundError):
