@@ -41,7 +41,11 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
     def create_dialogue(
         query: DialogueCreateRequest, user: User = Depends(auth_provider.get_user_token)
     ) -> JSONResponse:
-        d = Dialogue(owner_id=user.id, model_id=Id(query.model_id))
+        try:
+            model_id = Id(query.model_id)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        d = Dialogue(owner_id=user.id, model_id=model_id)
         storage.create_dialogue(dialogue=d)
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=d.dict())
 
