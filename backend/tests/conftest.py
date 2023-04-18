@@ -208,29 +208,41 @@ def storage(
     model_metadata_list: Sequence[ModelMetadata],
     dialogue_list: Sequence[Dialogue],
 ) -> Generator[BaseStorage, None, None]:
+    _model_metadata_detail_list = [d for d in model_metadata_detail_list]
+    _model_metadata_list = [d for d in model_metadata_list]
+    _dialogue_list = [d for d in dialogue_list]
     s = MagicMock(spec=BaseStorage)
-    s.list_model_metadata.return_value = model_metadata_list
+    s.list_model_metadata.return_value = _model_metadata_list
 
     def list_dialogues(user_id: UserId) -> Sequence[Dialogue]:
-        return [d for d in dialogue_list if d.owner_id == user_id]
+        return [d for d in _dialogue_list if d.owner_id == user_id]
 
     s.list_dialogues.side_effect = list_dialogues
 
     def retrieve_dialogue(dialogue_id: Id, user_id: UserId) -> Dialogue:
-        for d in dialogue_list:
+        for d in _dialogue_list:
             if d.id == dialogue_id and d.owner_id == user_id:
                 return d
         raise DialogueNotFoundError(dialogue_id=dialogue_id)
 
     s.retrieve_dialogue.side_effect = retrieve_dialogue
 
+    def delete_dialogue(dialogue_id: Id, user_id: UserId) -> None:
+        for d in _dialogue_list:
+            if d.id == dialogue_id and d.owner_id == user_id:
+                _dialogue_list.remove(d)
+                return
+        raise DialogueNotFoundError(dialogue_id=dialogue_id)
+
+    s.delete_dialogue.side_effect = delete_dialogue
+
     def retrieve_model_metadata(model_id: Id) -> ModelMetadataDetail:
         if model_id == Id("52WW-lw2SrOpgoHFJzh0Kg"):
-            return model_metadata_detail_list[0]
+            return _model_metadata_detail_list[0]
         elif model_id == Id("C9mJEx_gTX2gi5vFj2AHqw"):
-            return model_metadata_detail_list[1]
+            return _model_metadata_detail_list[1]
         elif model_id == Id("mJTIBVyBRgWpHq8zERv0kg"):
-            return model_metadata_detail_list[2]
+            return _model_metadata_detail_list[2]
         raise ModelMetadataNotFoundError(model_id=model_id)
 
     s.retrieve_model_metadata.side_effect = retrieve_model_metadata

@@ -252,17 +252,15 @@ def test_create_dialogue_returns_201_with_extra_unused_field(
 
 
 def test_delete_dialogue(
-    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, dialogue_list: Sequence[Dialogue], user: User
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, dialogue_ids: Sequence[Id], user: User
 ) -> None:
     sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
     app = FastAPI()
     app.include_router(sut, prefix="/api/v1/dialogues")
     client = TestClient(app)
-    response = client.delete(
-        f"/api/v1/dialogues/{dialogue_list[0].id}", headers={"Authorization": "Bearer valid_token"}
-    )
+    response = client.delete(f"/api/v1/dialogues/{dialogue_ids[0]}", headers={"Authorization": "Bearer valid_token"})
     assert response.status_code == 204
-    cast(MagicMock, storage.delete_dialogue).assert_called_once_with(user_id=user.id, dialogue_id=dialogue_list[0].id)
+    cast(MagicMock, storage.delete_dialogue).assert_called_once_with(user_id=user.id, dialogue_id=dialogue_ids[0])
 
 
 def test_delete_dialogue_returns_401_with_no_auth_header(
@@ -300,3 +298,29 @@ def test_delete_dialogue_returns_400_when_invalid_id(
         "/api/v1/dialogues/invalid-string-as-a-model-id-string", headers={"Authorization": "Bearer valid_token"}
     )
     assert response.status_code == 400
+
+
+def test_delete_dialogue_returns_404_when_dialogue_not_found(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.delete(
+        "/api/v1/dialogues/UJuydKCKSjCQ8HeptXFc-Q", headers={"Authorization": "Bearer valid_token"}
+    )
+    assert response.status_code == 404
+
+
+def test_delete_dialogue_returns_404_when_other_users_dialogue_id(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, dialogue_list: Sequence[Dialogue]
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.delete(
+        f"/api/v1/dialogues/{dialogue_list[-1].id}", headers={"Authorization": "Bearer valid_token"}
+    )
+    assert response.status_code == 404
