@@ -157,12 +157,48 @@ def dialogue_list(
     model_metadata_list: Sequence[ModelMetadata], dialogue_ids: Sequence[Id], user: User, other_user: User
 ) -> Generator[Sequence[Dialogue], None, None]:
     yield [
-        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[0], owner_id=user.id),
-        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[1], owner_id=user.id),
-        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[2], owner_id=user.id),
-        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[3], owner_id=user.id),
-        DialogueFactory.build(model_id=model_metadata_list[0].id, id=dialogue_ids[4], owner_id=other_user.id),
-        DialogueFactory.build(model_id=model_metadata_list[1].id, id=dialogue_ids[5], owner_id=other_user.id),
+        DialogueFactory.build(
+            model_id=model_metadata_list[0].id,
+            id=dialogue_ids[0],
+            owner_id=user.id,
+            created_at=Timestamp(1681609003878453),
+            updated_at=Timestamp(1681609003878583),
+        ),
+        DialogueFactory.build(
+            model_id=model_metadata_list[0].id,
+            id=dialogue_ids[1],
+            owner_id=user.id,
+            created_at=Timestamp(1681609003878846),
+            updated_at=Timestamp(1681609003878962),
+        ),
+        DialogueFactory.build(
+            model_id=model_metadata_list[1].id,
+            id=dialogue_ids[2],
+            owner_id=user.id,
+            created_at=Timestamp(1681609003879122),
+            updated_at=Timestamp(1681609003879236),
+        ),
+        DialogueFactory.build(
+            model_id=model_metadata_list[1].id,
+            id=dialogue_ids[3],
+            owner_id=user.id,
+            created_at=Timestamp(1681609003879390),
+            updated_at=Timestamp(1681609003879502),
+        ),
+        DialogueFactory.build(
+            model_id=model_metadata_list[0].id,
+            id=dialogue_ids[4],
+            owner_id=other_user.id,
+            created_at=Timestamp(1681609003879655),
+            updated_at=Timestamp(1681609003879763),
+        ),
+        DialogueFactory.build(
+            model_id=model_metadata_list[1].id,
+            id=dialogue_ids[5],
+            owner_id=other_user.id,
+            created_at=Timestamp(1681609003879913),
+            updated_at=Timestamp(1681609003880021),
+        ),
     ]
 
 
