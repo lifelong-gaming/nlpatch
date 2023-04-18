@@ -1,7 +1,6 @@
 from collections.abc import Sequence
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from fastapi.responses import JSONResponse
 
 from ..auth_providers.base import BaseAuthProvider
 from ..fields import Id
@@ -37,10 +36,8 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
             raise HTTPException(status_code=404, detail=str(e))
         return res
 
-    @router.post("/", response_model=Dialogue)
-    def create_dialogue(
-        query: DialogueCreateRequest, user: User = Depends(auth_provider.get_user_token)
-    ) -> JSONResponse:
+    @router.post("/", response_model=Dialogue, status_code=status.HTTP_201_CREATED)
+    def create_dialogue(query: DialogueCreateRequest, user: User = Depends(auth_provider.get_user_token)) -> Dialogue:
         try:
             model_id = Id(query.model_id)
         except ValueError as e:
@@ -51,7 +48,7 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
             raise HTTPException(status_code=400, detail=str(e))
         d = Dialogue(owner_id=user.id, model_id=model_id)
         storage.create_dialogue(dialogue=d)
-        return JSONResponse(status_code=status.HTTP_201_CREATED, content=d.dict())
+        return d
 
     @router.delete("/{dialogue_id}", status_code=status.HTTP_204_NO_CONTENT)
     def delete_dialogue(dialogue_id: str, user: User = Depends(auth_provider.get_user_token)) -> None:
