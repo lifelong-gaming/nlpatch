@@ -53,4 +53,15 @@ def generate_dialogue_router(auth_provider: BaseAuthProvider, storage: BaseStora
         storage.create_dialogue(dialogue=d)
         return JSONResponse(status_code=status.HTTP_201_CREATED, content=d.dict())
 
+    @router.delete("/{dialogue_id}", status_code=status.HTTP_204_NO_CONTENT)
+    def delete_dialogue(dialogue_id: str, user: User = Depends(auth_provider.get_user_token)) -> None:
+        try:
+            id_ = Id(dialogue_id)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        try:
+            storage.delete_dialogue(dialogue_id=id_, user_id=user.id)
+        except DialogueNotFoundError as e:
+            raise HTTPException(status_code=404, detail=str(e))
+
     return router

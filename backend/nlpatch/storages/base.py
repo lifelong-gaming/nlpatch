@@ -25,3 +25,7 @@ class BaseStorage(metaclass=ABCMeta):
     @abstractmethod
     def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
         ...
+
+    @abstractmethod
+    def delete_dialogue(self, user_id: UserId, dialogue_id: Id) -> None:
+        ...

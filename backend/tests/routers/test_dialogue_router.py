@@ -249,3 +249,17 @@ def test_create_dialogue_returns_201_with_extra_unused_field(
             updated_at=ts,
         )
     )
+
+
+def test_delete_dialogue(
+    storage: BaseStorage, valid_auth_provider: BaseAuthProvider, dialogue_list: Sequence[Dialogue], user: User
+) -> None:
+    sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
+    app = FastAPI()
+    app.include_router(sut, prefix="/api/v1/dialogues")
+    client = TestClient(app)
+    response = client.delete(
+        f"/api/v1/dialogues/{dialogue_list[0].id}", headers={"Authorization": "Bearer valid_token"}
+    )
+    assert response.status_code == 204
+    cast(MagicMock, storage.delete_dialogue).assert_called_once_with(user_id=user.id, dialogue_id=dialogue_list[0].id)

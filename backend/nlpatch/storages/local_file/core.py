@@ -53,3 +53,6 @@ class LocalFileStorage(BaseStorage):
 
     def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
         raise NotImplementedError()
+
+    def delete_dialogue(self, user_id: UserId, dialogue_id: Id) -> None:
+        raise NotImplementedError()
