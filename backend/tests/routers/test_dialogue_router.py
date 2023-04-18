@@ -289,7 +289,7 @@ def test_delete_dialogue_returns_401_when_invalid_auth(
     assert response.status_code == 401
 
 
-def test_delete_dialogue_returns_400_when_invalid_dialogue_id(
+def test_delete_dialogue_returns_400_when_invalid_id(
     storage: BaseStorage, valid_auth_provider: BaseAuthProvider
 ) -> None:
     sut = generate_dialogue_router(auth_provider=valid_auth_provider, storage=storage)
