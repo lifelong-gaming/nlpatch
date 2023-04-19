@@ -109,3 +109,31 @@ def test_delete_dialogue(dialogue_list: Sequence[Dialogue]) -> None:
         sut = LocalFileStorage(root_path=tmpdir)
         sut.delete_dialogue(user_id=dialogue.owner_id, dialogue_id=dialogue.id)
         assert not os.path.exists(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"))
+
+
+def test_delete_dialogue_raises_error_if_owner_not_matched(
+    dialogue_list: Sequence[Dialogue], other_user_id: UserId
+) -> None:
+    dialogue = dialogue_list[0]
+    with TemporaryDirectory() as tmpdir:
+        shutil.copytree(os.path.join(fixture_path, "dialogues"), os.path.join(tmpdir, "dialogues"))
+        assert os.path.exists(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"))
+        sut = LocalFileStorage(root_path=tmpdir)
+        with pytest.raises(DialogueNotFoundError):
+            sut.delete_dialogue(user_id=other_user_id, dialogue_id=dialogue.id)
+        assert os.path.exists(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"))
+
+
+def test_delete_dialogue_raises_error_if_directory_not_exists() -> None:
+    with TemporaryDirectory() as tmpdir:
+        sut = LocalFileStorage(root_path=tmpdir)
+        with pytest.raises(DialogueNotFoundError):
+            sut.delete_dialogue(user_id=UserId("dummy"), dialogue_id=Id("a1EX4W5JSqCO-WFTAfWvxQ"))
+
+
+def test_delete_dialogue_raises_error_if_file_not_exists() -> None:
+    with TemporaryDirectory() as tmpdir:
+        shutil.copytree(os.path.join(fixture_path, "dialogues"), os.path.join(tmpdir, "dialogues"))
+        sut = LocalFileStorage(root_path=tmpdir)
+        with pytest.raises(DialogueNotFoundError):
+            sut.delete_dialogue(user_id=UserId("dummy"), dialogue_id=Id("a1EX4W5JSqCO-WFTAfWvxQ"))
