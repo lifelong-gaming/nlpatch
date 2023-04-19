@@ -3,6 +3,7 @@ import Head from 'next/head'
 import styles from '@/styles/Home.module.css'
 import { useApiContext } from '@/src/contexts/ApiContext'
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
 import { useSnackbar } from 'notistack';
 import { Button, Typography } from '@mui/material';
 import ModelMetadataCards from '@/components/ModelMetadataCards';
@@ -13,6 +14,7 @@ export default function DialogueNew() {
   const { api } = useApiContext()
   const [modelMetadataList, setModelMetadataList] = useState<ModelMetadata[] | null>(null)
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter()
   useEffect(() => {
     if (!api) {
       return
@@ -23,6 +25,14 @@ export default function DialogueNew() {
       enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
     })
   }, [api])
+  const onStartDialogue = (id: string) => {
+    api?.createDialogue(id).then((res) => {
+      enqueueSnackbar("dialogue created", { variant: 'success' })
+      router.push(`/dialogue/${res.id}`)
+    }).catch((err) => {
+      enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
+    })
+  }
   return (
     <>
       <Head>
@@ -34,7 +44,7 @@ export default function DialogueNew() {
         {
           modelMetadataList === null ? <LoadingIndicator></LoadingIndicator>:
             modelMetadataList.length > 0?
-              <ModelMetadataCards modelMetadataList={modelMetadataList}></ModelMetadataCards>:
+              <ModelMetadataCards onStartDialogue={onStartDialogue} modelMetadataList={modelMetadataList}></ModelMetadataCards>:
               <Typography>{"モデルがありません"}</Typography>
         }
         <Button>start dialogue</Button>

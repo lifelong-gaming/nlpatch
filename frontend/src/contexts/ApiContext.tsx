@@ -2,6 +2,7 @@ import { ReactNode, createContext, useState, useContext, useEffect } from "react
 import { useAuthContext, UserType } from "./AuthContext"
 import User from "@/types/User"
 import ModelMetadata from "@/types/ModelMetadata"
+import Dialogue from "@/types/Dialogue"
 import { resolve } from "path";
 
 class APIHandler {
@@ -55,6 +56,22 @@ class APIHandler {
     ).then((res: Response) => {
       if (res.status === 401) return Promise.reject("Unauthorized")
       if (res.status !== 200) return Promise.reject(`${res.statusText} (${res.status})`)
+      return res.json()
+    }))
+  }
+
+  createDialogue: (modelId: string) => Promise<Dialogue> = (modelId) => {
+    return this.withRefresh(() => fetch(
+      this.constructUrl("/v1/dialogues"), {
+        method: "POST",
+        headers: {...this.constructHeaders(), "Content-Type": "application/json"},
+        body: JSON.stringify({
+          modelId
+        })
+      }
+    ).then((res: Response) => {
+      if (res.status === 401) return Promise.reject("Unauthorized")
+      if (res.status !== 201) return Promise.reject(`${res.statusText} (${res.status})`)
       return res.json()
     }))
   }
