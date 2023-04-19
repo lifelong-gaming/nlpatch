@@ -46,7 +46,16 @@ class LocalFileStorage(BaseStorage):
             raise ModelMetadataNotFoundError(model_id)
 
     def list_dialogues(self, user_id: UserId) -> Sequence[Dialogue]:
-        raise NotImplementedError()
+        res: List[Dialogue] = []
+        dirname = os.path.join(self.root_path, "dialogues")
+        if not os.path.exists(dirname):
+            return res
+        for fn in os.listdir(dirname):
+            with open(os.path.join(dirname, fn), "rb") as f:
+                x = Dialogue.parse_raw(f.read())
+            if x.owner_id == user_id:
+                res.append(x)
+        return res
 
     def retrieve_dialogue(self, user_id: UserId, dialogue_id: Id) -> Dialogue:
         raise NotImplementedError()

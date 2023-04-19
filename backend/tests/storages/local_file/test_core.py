@@ -7,7 +7,7 @@ import pytest
 from nlpatch.fields import Id
 from nlpatch.storages.exceptions import ModelMetadataNotFoundError
 from nlpatch.storages.local_file import LocalFileStorage
-from nlpatch.types import ModelMetadata, ModelMetadataDetail
+from nlpatch.types import Dialogue, ModelMetadata, ModelMetadataDetail
 
 wd = os.path.dirname(os.path.abspath(__file__))
 fixture_path = os.path.join(wd, "fixtures")
@@ -47,3 +47,9 @@ def test_retrieve_model_metadata_raises_error_if_file_not_exists() -> None:
     sut = LocalFileStorage(root_path=fixture_path)
     with pytest.raises(ModelMetadataNotFoundError):
         sut.retrieve_model_metadata(model_id)
+
+
+def test_list_dialogues(dialogue_list: Sequence[Dialogue]) -> None:
+    sut = LocalFileStorage(root_path=fixture_path)
+    actual = sut.list_dialogues(user_id=dialogue_list[0].owner_id)
+    assert sorted(actual, key=lambda x: x.id) == sorted(dialogue_list[:4], key=lambda x: x.id)
