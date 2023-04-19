@@ -5,7 +5,7 @@ from typing import List
 from ...fields import Id, UserId
 from ...types import Dialogue, ModelMetadata, ModelMetadataDetail
 from ..base import BaseStorage
-from ..exceptions import ModelMetadataNotFoundError
+from ..exceptions import DialogueNotFoundError, ModelMetadataNotFoundError
 
 
 class LocalFileStorage(BaseStorage):
@@ -58,7 +58,16 @@ class LocalFileStorage(BaseStorage):
         return res
 
     def retrieve_dialogue(self, user_id: UserId, dialogue_id: Id) -> Dialogue:
-        raise NotImplementedError()
+        dirname = os.path.join(self.root_path, "dialogues")
+        try:
+            with open(os.path.join(dirname, f"{dialogue_id}.json"), "rb") as f:
+                x = Dialogue.parse_raw(f.read())
+            if x.owner_id == user_id:
+                return x
+            else:
+                raise FileNotFoundError()
+        except FileNotFoundError:
+            raise DialogueNotFoundError(dialogue_id)
 
     def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
         raise NotImplementedError()
