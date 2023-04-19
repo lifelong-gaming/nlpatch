@@ -77,4 +77,15 @@ class LocalFileStorage(BaseStorage):
             f.write(dialogue.json().encode("utf-8"))
 
     def delete_dialogue(self, user_id: UserId, dialogue_id: Id) -> None:
-        raise NotImplementedError()
+        dirname = os.path.join(self.root_path, "dialogues")
+        if not os.path.exists(dirname):
+            raise DialogueNotFoundError(dialogue_id)
+        try:
+            with open(os.path.join(dirname, f"{dialogue_id}.json"), "rb") as f:
+                x = Dialogue.parse_raw(f.read())
+            if x.owner_id == user_id:
+                os.remove(os.path.join(dirname, f"{dialogue_id}.json"))
+            else:
+                raise FileNotFoundError()
+        except FileNotFoundError:
+            raise DialogueNotFoundError(dialogue_id)

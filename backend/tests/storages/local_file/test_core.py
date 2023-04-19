@@ -1,4 +1,5 @@
 import os
+import shutil
 from tempfile import TemporaryDirectory
 from typing import Sequence
 
@@ -98,3 +99,13 @@ def test_create_dialogue(dialogue_list: Sequence[Dialogue]) -> None:
         with open(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"), "r") as f:
             actual = Dialogue.parse_raw(f.read())
         assert actual == dialogue
+
+
+def test_delete_dialogue(dialogue_list: Sequence[Dialogue]) -> None:
+    dialogue = dialogue_list[0]
+    with TemporaryDirectory() as tmpdir:
+        shutil.copytree(os.path.join(fixture_path, "dialogues"), os.path.join(tmpdir, "dialogues"))
+        assert os.path.exists(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"))
+        sut = LocalFileStorage(root_path=tmpdir)
+        sut.delete_dialogue(user_id=dialogue.owner_id, dialogue_id=dialogue.id)
+        assert not os.path.exists(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"))
