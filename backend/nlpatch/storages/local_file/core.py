@@ -69,8 +69,12 @@ class LocalFileStorage(BaseStorage):
         except FileNotFoundError:
             raise DialogueNotFoundError(dialogue_id)
 
-    def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
-        raise NotImplementedError()
+    def create_dialogue(self, dialogue: Dialogue) -> None:
+        dirname = os.path.join(self.root_path, "dialogues")
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        with open(os.path.join(dirname, f"{dialogue.id}.json"), "wb") as f:
+            f.write(dialogue.json().encode("utf-8"))
 
     def delete_dialogue(self, user_id: UserId, dialogue_id: Id) -> None:
         raise NotImplementedError()

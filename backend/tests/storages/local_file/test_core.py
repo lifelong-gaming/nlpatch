@@ -88,3 +88,13 @@ def test_retrieve_dialogue_raises_error_if_owner_not_matched(dialogue_ids: Seque
     sut = LocalFileStorage(root_path=fixture_path)
     with pytest.raises(DialogueNotFoundError):
         sut.retrieve_dialogue(user_id=other_user_id, dialogue_id=dialogue_ids[0])
+
+
+def test_create_dialogue(dialogue_list: Sequence[Dialogue]) -> None:
+    dialogue = dialogue_list[0]
+    with TemporaryDirectory() as tmpdir:
+        sut = LocalFileStorage(root_path=tmpdir)
+        sut.create_dialogue(dialogue=dialogue)
+        with open(os.path.join(tmpdir, "dialogues", f"{dialogue.id}.json"), "r") as f:
+            actual = Dialogue.parse_raw(f.read())
+        assert actual == dialogue

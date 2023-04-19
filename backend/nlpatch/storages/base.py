@@ -23,7 +23,7 @@ class BaseStorage(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    def create_dialogue(self, dialogue: Dialogue) -> Dialogue:
+    def create_dialogue(self, dialogue: Dialogue) -> None:
         ...
 
     @abstractmethod
