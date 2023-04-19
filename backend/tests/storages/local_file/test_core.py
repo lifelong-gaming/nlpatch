@@ -4,7 +4,7 @@ from typing import Sequence
 
 import pytest
 
-from nlpatch.fields import Id
+from nlpatch.fields import Id, UserId
 from nlpatch.storages.exceptions import ModelMetadataNotFoundError
 from nlpatch.storages.local_file import LocalFileStorage
 from nlpatch.types import Dialogue, ModelMetadata, ModelMetadataDetail
@@ -53,3 +53,10 @@ def test_list_dialogues(dialogue_list: Sequence[Dialogue]) -> None:
     sut = LocalFileStorage(root_path=fixture_path)
     actual = sut.list_dialogues(user_id=dialogue_list[0].owner_id)
     assert sorted(actual, key=lambda x: x.id) == sorted(dialogue_list[:4], key=lambda x: x.id)
+
+
+def test_list_dialogues_returns_empty_if_directory_not_exists() -> None:
+    with TemporaryDirectory() as tmpdir:
+        sut = LocalFileStorage(root_path=tmpdir)
+        actual = sut.list_dialogues(user_id=UserId("dummy"))
+        assert actual == []
