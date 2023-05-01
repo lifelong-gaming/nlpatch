@@ -13,6 +13,7 @@ import Button from '@mui/material/Button';
 import { useSnackbar } from 'notistack';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
 import { app } from "@/src/firebase"
+import { Paper } from "@mui/material";
 
 interface Prop {
   onLoginSucceded: () => void;
@@ -47,44 +48,47 @@ const LoginForm = (props: Prop) => {
     event.preventDefault();
   };
   return (
-    <form onSubmit={handleSubmit} style={{width: "100%"}}>
-      <Box
-        sx={{
-          py: 2,
-          display: 'grid',
-          gap: 2,
-          alignItems: 'center',
-          flexWrap: 'wrap',
-        }}
-      >
-        <TextField
-          label="email address"
-          onChange={handleChangeEmail}
-        />
-        <FormControl variant="outlined">
-          <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-          <OutlinedInput
-            onChange={handleChangePassword}
-            id="outlined-adornment-password"
-            type={showPassword ? 'text' : 'password'}
-            endAdornment={
-              <InputAdornment position="end">
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={handleClickShowPassword}
-                  onMouseDown={handleMouseDownPassword}
-                  edge="end"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </InputAdornment>
-            }
-            label="Password"
+    <Paper sx={{width: "100%"}}>
+      <form onSubmit={handleSubmit}>
+        <Box
+          sx={{
+            py: 2,
+            display: 'grid',
+            gap: 2,
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            p: 4
+          }}
+        >
+          <TextField
+            label="email address"
+            onChange={handleChangeEmail}
           />
-        </FormControl>
-        <Button type="submit" variant="contained">Login</Button>
-      </Box>
-    </form>  
+          <FormControl variant="outlined">
+            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+            <OutlinedInput
+              onChange={handleChangePassword}
+              id="outlined-adornment-password"
+              type={showPassword ? 'text' : 'password'}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+              label="Password"
+              />
+          </FormControl>
+          <Button type="submit" variant="contained">Login</Button>
+        </Box>
+      </form>  
+   </Paper>
   )
 };
 
