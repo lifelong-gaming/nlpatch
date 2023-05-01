@@ -2,17 +2,14 @@ import React from "react"
 import { useRouter } from "next/router"
 
 import LoginForm from "@/components/LoginForm"
-import { useAuthContext } from "@/src/contexts/AuthContext"
 import Head from "next/head"
-import styles from '@/styles/Home.module.css'
+import { enqueueSnackbar } from "notistack"
 
 const Login = () => {
   const router = useRouter()
   const handleLogin = () => {
+    enqueueSnackbar("Login success", { variant: "success" })
     router.push("/")
-  }
-  const handleClose = async () => {
-    await router.push("/")
   }
 
   return (
@@ -20,9 +17,7 @@ const Login = () => {
       <Head>
         <title>Login</title>
       </Head>
-      <main className={styles.main}>
-        <LoginForm onLoginSucceded={handleLogin} />
-      </main>
+      <LoginForm onLoginSucceded={handleLogin} />
     </>
   )
 }

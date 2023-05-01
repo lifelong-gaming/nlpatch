@@ -1,11 +1,10 @@
 import React, {useState} from 'react'
 import Head from 'next/head'
-import styles from '@/styles/Home.module.css'
 import { useApiContext } from '@/src/contexts/ApiContext'
 import { useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { useSnackbar } from 'notistack';
-import { Button, Typography } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
+import { Typography } from '@mui/material';
 import ModelMetadataCards from '@/components/ModelMetadataCards';
 import ModelMetadata from '@/types/ModelMetadata'
 import LoadingIndicator from '@/components/LoadingIndicator'
@@ -13,7 +12,6 @@ import LoadingIndicator from '@/components/LoadingIndicator'
 export default function DialogueNew() {
   const { api } = useApiContext()
   const [modelMetadataList, setModelMetadataList] = useState<ModelMetadata[] | null>(null)
-  const { enqueueSnackbar } = useSnackbar();
   const router = useRouter()
   useEffect(() => {
     if (!api) {

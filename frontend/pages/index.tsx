@@ -1,13 +1,11 @@
 import Head from 'next/head'
-import styles from '@/styles/Home.module.css'
 import { useApiContext } from '@/src/contexts/ApiContext'
 import { useEffect } from 'react'
-import { useSnackbar } from 'notistack';
 import { Button } from '@mui/material';
+import { enqueueSnackbar } from 'notistack';
 
 export default function Home() {
   const { api } = useApiContext()
-  const { enqueueSnackbar } = useSnackbar();
   useEffect(() => {
     if (!!api) {
       enqueueSnackbar('API is ready', { variant: 'success' })
