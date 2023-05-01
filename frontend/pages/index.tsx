@@ -22,15 +22,13 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        <Button onClick={() => {
-          api?.getUserMe().then((res) => {
-            enqueueSnackbar(JSON.stringify(res), { variant: 'success' })
-          }).catch((err) => {
-            enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
-          })
-        }}>Click me</Button>
-      </main>
+      <Button onClick={() => {
+        api?.getUserMe().then((res) => {
+          enqueueSnackbar(JSON.stringify(res), { variant: 'success' })
+        }).catch((err) => {
+          enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
+        })
+      }}>Click me</Button>
     </>
   )
 }

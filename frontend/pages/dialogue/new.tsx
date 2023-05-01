@@ -40,15 +40,12 @@ export default function DialogueNew() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className={styles.main}>
-        {
-          modelMetadataList === null ? <LoadingIndicator></LoadingIndicator>:
-            modelMetadataList.length > 0?
-              <ModelMetadataCards onStartDialogue={onStartDialogue} modelMetadataList={modelMetadataList}></ModelMetadataCards>:
-              <Typography>{"モデルがありません"}</Typography>
-        }
-        <Button>start dialogue</Button>
-      </main>
+      {
+        modelMetadataList === null ? <LoadingIndicator></LoadingIndicator>:
+          modelMetadataList.length > 0?
+            <ModelMetadataCards onStartDialogue={onStartDialogue} modelMetadataList={modelMetadataList}></ModelMetadataCards>:
+            <Typography>{"モデルがありません"}</Typography>
+      }
     </>
   )
 }
