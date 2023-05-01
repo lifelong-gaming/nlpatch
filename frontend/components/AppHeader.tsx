@@ -1,4 +1,4 @@
-import { AppBar, Toolbar, Typography } from "@mui/material"
+import { AppBar, Box, Toolbar, Typography } from "@mui/material"
 import { useAuthContext } from "@/src/contexts/AuthContext"
 import Link from "next/link"
 import AccountMenu from "./AccountMenu"
@@ -9,9 +9,12 @@ const AppHeader = () => {
   return (
     <AppBar>
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-          NLPatch
-        </Typography>
+        <Link href={!!user?"/":"/login"}>
+          <Typography variant="h5">
+            NLPatch
+          </Typography>
+        </Link>
+        <Box sx={{ flexGrow: 1 }} />
         {user && <AccountMenu />}
       </Toolbar>
     </AppBar>

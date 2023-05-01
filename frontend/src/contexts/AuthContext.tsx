@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: AuthProps) => {
     return () => {
       authStateChanged()
     }
-  }, [])
+  }, [user])
 
   return (
     <AuthContext.Provider value={value}>
