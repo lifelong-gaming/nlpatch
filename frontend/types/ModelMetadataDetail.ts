@@ -1,11 +1,6 @@
 import {BaseInput} from './Input';
+import ModelMetadata from './ModelMetadata';
 
-export default interface ModelMetadataDetail {
-  id: string;
-  name: string;
-  version: string;
-  description: string;
-  createdAt: number;
-  updatedAt: number;
+export default interface ModelMetadataDetail extends ModelMetadata {
   inputs: BaseInput[];
 }

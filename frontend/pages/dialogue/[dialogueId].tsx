@@ -14,6 +14,7 @@ export default function DialogueId() {
   const router = useRouter()
   const { api } = useApiContext()
   const { dialogueId } = router.query
+  const [title, setTitle] = React.useState<string>('NLPatch / dialogue')
   const [modelMetadataDetail, setModelMetadata] = React.useState<ModelMetadataDetail | null>(null)
   const [dialogueData, setDialogueData] = React.useState<Dialogue | null>(null)
   useEffect(() => {
@@ -22,6 +23,7 @@ export default function DialogueId() {
     }
     api.getModelMetadata(dialogueData.modelId).then((res) => {
       setModelMetadata(res)
+      setTitle(`NLPatch / dialogue with ${res.name}`)
       console.log(res)
     }).catch((err) => {
       enqueueSnackbar(JSON.stringify(err), { variant: 'error' })
@@ -41,7 +43,7 @@ export default function DialogueId() {
   return (
     <>
       <Head>
-        <title>NLPatch / dialogue{ modelMetadataDetail?` with ${modelMetadataDetail.name}`:"" }</title>
+        <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>

@@ -11,30 +11,28 @@ import { Box, Container, CssBaseline } from '@mui/material';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <CssBaseline>
-      <ThemeProvider theme={theme}>
-        <SnackbarProvider maxSnack={10}>
-          <AuthProvider>
-            <ApiProvider>
-              <AppHeader />
-              <Box component="main" sx={
-                {
-                  flexGrow: 1,
-                  pb: 2,
-                  px: 2,
-                  pt: 10,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  minHeight: "100vh",
-                }
-              }>
-                <Component {...pageProps} />
-              </Box>
-            </ApiProvider>
-          </AuthProvider>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </CssBaseline>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <SnackbarProvider maxSnack={10} />
+        <AuthProvider>
+          <ApiProvider>
+            <AppHeader />
+            <Box component="main" sx={
+              {
+                flexGrow: 1,
+                pb: 2,
+                px: 2,
+                pt: 10,
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                minHeight: "100vh",
+              }
+            }>
+              <Component {...pageProps} />
+            </Box>
+          </ApiProvider>
+        </AuthProvider>
+    </ThemeProvider>
   )
 }
